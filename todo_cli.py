@@ -25,12 +25,20 @@ def add(description):
     id = get_next_task_id()
     created_at = updated_at = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     
+    
     db_client.tasks.insert_one({"id":id,
                                 "description": description,
-                                "status":"todo",
+                                "status":"to-do",
                                 "created_at":created_at,
                                 "updated_at":updated_at})
     click.echo("New task saved")
+
+@click.command("delete", short_help="This is to delete tasks")
+@click.argument("id")
+def delete(id):
+    int_id = int(id)
+    db_client.tasks.delete_one({"id":int_id})
+    click.echo("The task has been deleted")
 
 @click.command("list", short_help="List all pending tasks, depending on the status or in general")
 @click.option("--done", is_flag=True)
@@ -75,7 +83,7 @@ def update(id, status):
 tasks_management.add_command(add)
 tasks_management.add_command(list)
 tasks_management.add_command(update)
-
+tasks_management.add_command(delete)
 
 if __name__ == '__main__':
     tasks_management()
